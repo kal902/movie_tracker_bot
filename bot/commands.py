@@ -37,7 +37,12 @@ async def movie_details(update: Update, context: CallbackContext):
     print("detail command received")
     query = update.callback_query
     movie_detail_url = query.data
-
+    print("detail url: ", movie_detail_url)
     await query.answer()
-    await query.edit_message_text(text=f"{movie_detail_url}")
+
+    movie_detail = scraper.get_movie_detail(movie_detail_url)
+    movie_detail_text = "Director: {director}\nWriters: {writers}\nStars: {stars}".format(director=movie_detail['director'],
+                                                                                           writers=", ".join(movie_detail['writers']),
+                                                                                           stars=", ".join(movie_detail['stars']))
+    await query.edit_message_text(text=movie_detail_text)
 

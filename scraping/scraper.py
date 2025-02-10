@@ -11,14 +11,14 @@ headers = {
 }
 
 class imdb_scraper:
-    base_url = "https://www.imdb.com/"
-
+    base_url = "https://www.imdb.com"
+    
     def __init__(self):
         pass
 
     # query/result may have multiple match
     def search_movie(self, title):
-        search_url = self.base_url + "find/?q={movie_name}".format(movie_name=title)
+        search_url = self.base_url + "/find/?q={movie_name}".format(movie_name=title)
         print(search_url)
         response = requests.get(search_url, headers=headers)
         soap_html = BeautifulSoup(response.content, "html.parser")
@@ -59,3 +59,18 @@ class imdb_scraper:
             print(search_match)
             return search_match
         return []
+    
+    # get detail of the movie
+    def get_movie_detail(self, url):
+        detail_url = self.base_url + url
+        print("detail url: ", detail_url)
+        response = requests.get(detail_url, headers=headers)
+        soup = BeautifulSoup(response.content, "html.parser")
+        
+        mov_detail = {}
+        mov_detail['plot'] = soup.find("span", class_="sc-42125d72-0 gKbnVu")
+        mov_detail['director'] = soup.select_one('[data-testid="title-pc-principal-credit"] a').text
+        mov_detail['writers'] = [a.text for a in soup.select('[href*="/fullcredits/?ref_=tt_ov_wr#writer"] ~ div a')]
+        mov_detail['stars'] = [a.text for a in soup.select('[href*="/fullcredits/?ref_=tt_ov_st#cast"] ~ div a')]
+
+        return mov_detail
