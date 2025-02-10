@@ -68,7 +68,7 @@ class imdb_scraper:
         soup = BeautifulSoup(response.content, "html.parser")
         
         mov_detail = {}
-        mov_detail['plot'] = soup.find("span", class_="sc-42125d72-0 gKbnVu")
+        mov_detail['plot'] = soup.find("span", class_="sc-42125d72-0 gKbnVu").text
         mov_detail['director'] = soup.select_one('[data-testid="title-pc-principal-credit"] a').text
         mov_detail['writers'] = [a.text for a in soup.select('[href*="/fullcredits/?ref_=tt_ov_wr#writer"] ~ div a')]
         mov_detail['stars'] = [a.text for a in soup.select('[href*="/fullcredits/?ref_=tt_ov_st#cast"] ~ div a')]
